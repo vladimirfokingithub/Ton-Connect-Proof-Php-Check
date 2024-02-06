@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>TON PHP PROOF CHECK</title>
+</head>
+<body>
+	<div class="ton_connect_wrap">
+	    <div class="ton_connect" id="ton-connect"></div>
+	</div>
+
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+	<script type="text/javascript">
+		const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+	        manifestUrl: 'tonconnect-manifest.json',
+	        buttonRootId: 'ton-connect',
+	        items: [
+	            {"name": "ton_addr"},
+	            {"name": "ton_proof", "payload": "rand"}
+	        ]
+	    });
+
+	    tonConnectUI.setConnectRequestParameters({
+	        state: "ready",
+	        value: {
+	            tonProof: 'rand' 
+	        }
+	    });
+
+	    tonConnectUI.onStatusChange(wallet => {
+	        if (wallet && wallet.connectItems?.tonProof && 'proof' in wallet.connectItems.tonProof) 
+	        {
+	        	console.log(wallet.account);
+	            checkProofInYourBackend(wallet.connectItems.tonProof.proof, wallet.account);
+	        }
+	    });
+
+	    async function connectToWallet() {
+	        const connectedWallet = await tonConnectUI.connectWallet();
+	    }
+
+	    function checkProofInYourBackend(proof, wallet) {
+		    // SEND PROOF AND WALLET
+		}
+
+	    connectToWallet();
+	</script>
+</body>
+</html>
