@@ -2,9 +2,12 @@
 
 	function check_proof($ton_proof, $account) 
     {
-        $workchain = $account["workchain"];
+        $account["address"] = str_replace("0:", "", $account["address"]);
+
+        $workchain = 0; // 0 - рабочая сеть
         $address = hex2bin($account["address"]);
-        $public_key = hex2bin($account["public_key"]);
+        $public_key = hex2bin($account["publicKey"]);
+        
         $timestamp = $ton_proof["timestamp"];
         $domain_length = $ton_proof["domain"]["lengthBytes"];
         $domain_value = $ton_proof["domain"]["value"];
@@ -22,10 +25,9 @@
 
         // Создание сообщения для подписи
         $hashed_message = hash("sha256", $message, true);
-        $signature_message = "\xFF\xFF" . "ton-connect" . $hashed_message;
+        $signature_message = "\xFF\xFF" . utf8_encode("ton-connect") . $hashed_message;
         $hashed_signature_message = hash("sha256", $signature_message, true);
 
-        // Проверка подписи
         $valid = sodium_crypto_sign_verify_detached($signature, $hashed_signature_message, $public_key);
 
         return $valid;
